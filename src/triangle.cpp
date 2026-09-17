@@ -64,7 +64,6 @@ bool Triangle::getLightIntersection(const Ray& ray, double* fill){
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
    
-   Vector delta = ray.point + ray.vector * r - center;
    const double px = ray.point.x + ray.vector.x * r - center.x;
    const double py = ray.point.y + ray.vector.y * r - center.y;
    const double pz = ray.point.z + ray.vector.z * r - center.z;
