@@ -42,35 +42,64 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
 }
 
 double Triangle::getIntersection(Ray ray){
-   double time = Plane::getIntersection(ray);
-   if(time==inf) 
-      return time;
+   Vector v0 = center;
+   Vector v1 = center + right * textureX;
+   Vector v2 = center + right * thirdX + up * textureY;
+   Vector e1 = v1 - v0;
+   Vector e2 = v2 - v0;
+   Vector h = ray.vector.cross(e2);
+   double a = e1.dot(h);
 
-   const double px = ray.point.x + ray.vector.x * time - center.x;
-   const double py = ray.point.y + ray.vector.y * time - center.y;
-   const double pz = ray.point.z + ray.vector.z * time - center.z;
-   const double dx = px * right.x + py * right.y + pz * right.z;
-   const double dy = px * up.x + py * up.y + pz * up.z;
+   if(fabs(a) < 1e-12)
+      return inf;
 
-   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
-   return((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0)))?inf:time;
+   double f = 1.0 / a;
+   Vector s = ray.point - v0;
+   double u = f * s.dot(h);
+   if(u < 0.0 || u > 1.0)
+      return inf;
+
+   Vector q = s.cross(e1);
+   double v = f * ray.vector.dot(q);
+   if(v < 0.0 || u + v > 1.0)
+      return inf;
+
+   double t = f * e2.dot(q);
+   return (t > 1e-12) ? t : inf;
 }
 
 bool Triangle::getLightIntersection(Ray ray, double* fill){
-   const double t = ray.vector.dot(vect);
-   const double norm = vect.dot(ray.point)+d;
-   const double r = -norm/t;
-   if(r<=0. || r>=1.) return false;
+   Vector v0 = center;
+   Vector v1 = center + right * textureX;
+   Vector v2 = center + right * thirdX + up * textureY;
+   Vector e1 = v1 - v0;
+   Vector e2 = v2 - v0;
+   Vector h = ray.vector.cross(e2);
+   double a = e1.dot(h);
 
-   const double px = ray.point.x + ray.vector.x * r - center.x;
-   const double py = ray.point.y + ray.vector.y * r - center.y;
-   const double pz = ray.point.z + ray.vector.z * r - center.z;
-   const double dx = px * right.x + py * right.y + pz * right.z;
-   const double dy = px * up.x + py * up.y + pz * up.z;
-   
-   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
-   if ((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0))) return false;
-   
+   if(fabs(a) < 1e-12)
+      return false;
+
+   double f = 1.0 / a;
+   Vector s = ray.point - v0;
+   double u = f * s.dot(h);
+   if(u < 0.0 || u > 1.0)
+      return false;
+
+   Vector q = s.cross(e1);
+   double v = f * ray.vector.dot(q);
+   if(v < 0.0 || u + v > 1.0)
+      return false;
+
+   double t = f * e2.dot(q);
+   if(t <= 1e-12 || t >= 1.0)
+      return false;
+
+   Vector hit = ray.point + ray.vector * t;
+   Vector local = hit - center;
+   double dx = local.dot(right);
+   double dy = local.dot(up);
+
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
    double amb, op, ref;
