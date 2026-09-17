@@ -45,12 +45,15 @@ double Triangle::getIntersection(Ray ray){
    double time = Plane::getIntersection(ray);
    if(time==inf) 
       return time;
-   
-   Vector delta = ray.point + ray.vector * time - center;
-	Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
 
-   unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
-   return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
+   const double px = ray.point.x + ray.vector.x * time - center.x;
+   const double py = ray.point.y + ray.vector.y * time - center.y;
+   const double pz = ray.point.z + ray.vector.z * time - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
+
+   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
+   return((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0)))?inf:time;
 }
 
 bool Triangle::getLightIntersection(Ray ray, double* fill){
@@ -58,17 +61,20 @@ bool Triangle::getLightIntersection(Ray ray, double* fill){
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
+
+   const double px = ray.point.x + ray.vector.x * r - center.x;
+   const double py = ray.point.y + ray.vector.y * r - center.y;
+   const double pz = ray.point.z + ray.vector.z * r - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
    
-   Vector delta = ray.point + ray.vector * r - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
-   
-   unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
-   if ((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0))) return false;
+   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
+   if ((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0))) return false;
    
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx/textureX-.5), fix(dy/textureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
