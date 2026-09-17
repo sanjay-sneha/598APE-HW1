@@ -47,10 +47,12 @@ double Triangle::getIntersection(const Ray& ray){
    double time = Plane::getIntersection(ray);
    if(time==inf) 
       return time;
-   
-   Vector delta = ray.point + ray.vector * time - center;
-	const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
+
+   const double px = ray.point.x + ray.vector.x * time - center.x;
+   const double py = ray.point.y + ray.vector.y * time - center.y;
+   const double pz = ray.point.z + ray.vector.z * time - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
    unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
    return((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0)))?inf:time;
@@ -63,9 +65,12 @@ bool Triangle::getLightIntersection(const Ray& ray, double* fill){
    if(r<=0. || r>=1.) return false;
    
    Vector delta = ray.point + ray.vector * r - center;
-   const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
-   
+   const double px = ray.point.x + ray.vector.x * r - center.x;
+   const double py = ray.point.y + ray.vector.y * r - center.y;
+   const double pz = ray.point.z + ray.vector.z * r - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
+
    unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
    if ((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0))) return false;
    
