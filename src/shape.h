@@ -8,13 +8,13 @@ class Shape{
    double yaw, pitch, roll, xsin, xcos, ysin, ycos, zsin, zcos;
    Vector center;
    Texture* texture;
-   double textureX, textureY, mapX, mapY, mapOffX, mapOffY;
+   double textureX, textureY, mapX, mapY, mapOffX, mapOffY, invTextureX, invTextureY;
    Texture* normalMap;
-   virtual double getIntersection(Ray ray) = 0;
-   virtual bool getLightIntersection(Ray ray, double* fill) = 0;
+   virtual double getIntersection(const Ray& ray) = 0;
+   virtual bool getLightIntersection(const Ray& ray, double* fill) = 0;
    virtual void move() = 0;
    virtual unsigned char reversible() = 0;
-   virtual void getColor(unsigned char* toFill, double* am, double* op, double* ref, Autonoma* r, Ray ray, unsigned int depth) = 0;
+   virtual void getColor(unsigned char* toFill, double* am, double* op, double* ref, Autonoma* r, const Ray& ray, unsigned int depth) = 0;
    virtual Vector getNormal(Vector point) = 0;
    virtual void setAngles(double yaw, double pitch, double roll) = 0;
    virtual void setYaw(double d) = 0;
@@ -22,6 +22,6 @@ class Shape{
    virtual void setRoll(double d) = 0;
 };
 
-void calcColor(unsigned char* toFill, Autonoma*, Ray ray, unsigned int depth);
+void calcColor(unsigned char* toFill, Autonoma*, const Ray& ray, unsigned int depth);
 
 #endif

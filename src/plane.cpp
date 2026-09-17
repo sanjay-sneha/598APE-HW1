@@ -5,6 +5,8 @@ Plane::Plane(const Vector &c, Texture* t, double ya, double pi, double ro, doubl
    setAngles(yaw, pitch, roll);
    normalMap = NULL;
    mapX = textureX; mapY = textureY;
+   invTextureX = (tx != 0.) ? 1.0 / tx : 0.;
+   invTextureY = (ty != 0.) ? 1.0 / ty : 0.;
 }
 
 void Plane::setAngles(double a, double b, double c){
@@ -73,16 +75,16 @@ void Plane::setRoll(double c){
    d = -vect.dot(center);
 }
 
-double Plane::getIntersection(Ray ray){
-   const double t = ray.vector.dot(vect);
-   const double norm = vect.dot(ray.point)+d;
+double Plane::getIntersection(const Ray& ray){
+   const double t =ray.vector.x*vect.x+ray.vector.y*vect.y+ray.vector.z*vect.z;
+   const double norm = vect.x*ray.point.x+vect.y*ray.point.y+vect.z*ray.point.z+d;
    const double r = -norm/t;
    return (r>0)?r:inf;
 }
 
-bool Plane::getLightIntersection(Ray ray, double* fill){
-   const double t = ray.vector.dot(vect);
-   const double norm = vect.dot(ray.point)+d;
+bool Plane::getLightIntersection(const Ray& ray, double* fill){
+   const double t =ray.vector.x*vect.x+ray.vector.y*vect.y+ray.vector.z*vect.z;
+   const double norm = vect.x*ray.point.x+vect.y*ray.point.y+vect.z*ray.point.z+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
 
@@ -96,7 +98,7 @@ bool Plane::getLightIntersection(Ray ray, double* fill){
 
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dx/textureX-.5), fix(dy/textureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx*invTextureX-.5), fix(dy*invTextureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
@@ -107,14 +109,14 @@ bool Plane::getLightIntersection(Ray ray, double* fill){
 void Plane::move(){
    d = -vect.dot(center);
 }
-void Plane::getColor(unsigned char* toFill,double* am, double* op, double* ref, Autonoma* r, Ray ray, unsigned int depth){
+void Plane::getColor(unsigned char* toFill,double* am, double* op, double* ref, Autonoma* r, const Ray& ray, unsigned int depth){
    const double px = ray.point.x - center.x;
    const double py = ray.point.y - center.y;
    const double pz = ray.point.z - center.z;
    const double dx = px * right.x + py * right.y + pz * right.z;
    const double dy = px * up.x + py * up.y + pz * up.z;
 
-   texture->getColor(toFill, am, op, ref, fix(dx/textureX-.5), fix(dy/textureY-.5));
+   texture->getColor(toFill, am, op, ref, fix(dx*invTextureX-.5), fix(dy*invTextureY-.5));
 }
 unsigned char Plane::reversible(){ 
    return 1; }
