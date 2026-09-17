@@ -3,6 +3,8 @@
 Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.){
    center = c;
    Vector righta = (b-c);
+   invTextureX = 1.0 / textureX;
+   invTextureY = 1.0 / textureY;
    textureX = righta.mag();
    right = righta*invTextureX;
    vect = right.cross(b-a).normalize();
@@ -47,10 +49,11 @@ double Triangle::getIntersection(const Ray& ray){
       return time;
    
    Vector delta = ray.point + ray.vector * time - center;
-	Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+	const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
 
-   unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
-   return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
+   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
+   return((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0)))?inf:time;
 }
 
 bool Triangle::getLightIntersection(const Ray& ray, double* fill){
@@ -60,15 +63,16 @@ bool Triangle::getLightIntersection(const Ray& ray, double* fill){
    if(r<=0. || r>=1.) return false;
    
    Vector delta = ray.point + ray.vector * r - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
    
-   unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
-   if ((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0))) return false;
+   unsigned char tmp = (thirdX - dx) * textureY + (thirdX-textureX) * (dy - textureY) < 0.0;
+   if ((tmp!=(textureX * dy < 0.0)) || (tmp != (dx * textureY - thirdX * dy < 0.0))) return false;
    
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x*invTextureX-.5), fix(dist.y*invTextureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx*invTextureX-.5), fix(dy*invTextureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;

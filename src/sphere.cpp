@@ -22,7 +22,7 @@ bool Sphere::getLightIntersection(const Ray& ray, double* fill){
    double data3 = atan2( point.z-center.z, point.x-center.x);
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix((yaw+data2)/M_TWO_PI*invTextureX),fix((pitch/M_TWO_PI-(data3)))*invTextureY);
+   texture->getColor(temp, &amb, &op, &ref,fix((yaw+data2)/M_TWO_PI),fix((pitch/M_TWO_PI-(data3))));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
@@ -50,7 +50,7 @@ unsigned char Sphere::reversible(){return 0;}
 void Sphere::getColor(unsigned char* toFill, double* amb, double* op, double* ref, Autonoma* r, const Ray& ray, unsigned int depth){
    double data3 = (center.y-ray.point.y+radius)/(2*radius);
    double data2 = atan2( ray.point.z-center.z, ray.point.x-center.x);
-   texture->getColor(toFill, amb, op, ref,fix((yaw+data2)/M_TWO_PI*invTextureX),fix((pitch/M_TWO_PI-(data3))*invTextureY));
+   texture->getColor(toFill, amb, op, ref,fix((yaw+data2)/M_TWO_PI),fix((pitch/M_TWO_PI-(data3))));
 }
 Vector Sphere::getNormal(Vector point){
    Vector vect = point-center;

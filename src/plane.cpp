@@ -5,7 +5,8 @@ Plane::Plane(const Vector &c, Texture* t, double ya, double pi, double ro, doubl
    setAngles(yaw, pitch, roll);
    normalMap = NULL;
    mapX = textureX; mapY = textureY;
-   invTextureX = 1/tx; invTextureY = 1/ty;
+   invTextureX = (tx != 0.) ? 1.0 / tx : 0.;
+   invTextureY = (ty != 0.) ? 1.0 / ty : 0.;
 }
 
 void Plane::setAngles(double a, double b, double c){
@@ -89,12 +90,15 @@ bool Plane::getLightIntersection(const Ray& ray, double* fill){
 
    if(texture->opacity>1-1E-6) return true;   
 
-   Vector delta = ray.point - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double px = ray.point.x - center.x;
+   const double py = ray.point.y - center.y;
+   const double pz = ray.point.z - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x*invTextureX-.5), fix(dist.y*invTextureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx*invTextureX-.5), fix(dy*invTextureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
@@ -106,10 +110,13 @@ void Plane::move(){
    d = -vect.dot(center);
 }
 void Plane::getColor(unsigned char* toFill,double* am, double* op, double* ref, Autonoma* r, const Ray& ray, unsigned int depth){
-   Vector delta = ray.point - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double px = ray.point.x - center.x;
+   const double py = ray.point.y - center.y;
+   const double pz = ray.point.z - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
-   texture->getColor(toFill, am, op, ref, fix(dist.x*invTextureX-.5), fix(dist.y*invTextureY-.5));
+   texture->getColor(toFill, am, op, ref, fix(dx*invTextureX-.5), fix(dy*invTextureY-.5));
 }
 unsigned char Plane::reversible(){ 
    return 1; }
@@ -118,12 +125,15 @@ Vector Plane::getNormal(Vector point){
    if(normalMap==NULL)
       return vect;
    else{
-      Vector delta = point - center;
-      Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+      const double px = point.x - center.x;
+      const double py = point.y - center.y;
+      const double pz = point.z - center.z;
+      const double dx = px * right.x + py * right.y + pz * right.z;
+      const double dy = px * up.x + py * up.y + pz * up.z;
       
       double am, ref, op;
       unsigned char norm[3];
-      normalMap->getColor(norm, &am, &op, &ref, fix(dist.x/mapX-.5+mapOffX), fix(dist.y/mapY-.5+mapOffY));
+      normalMap->getColor(norm, &am, &op, &ref, fix(dx/mapX-.5+mapOffX), fix(dy/mapY-.5+mapOffY));
       Vector ret = ((norm[0]-128)*right+(norm[1]-128)*up+norm[2]*vect).normalize();
       return ret;
    }
