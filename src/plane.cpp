@@ -89,11 +89,12 @@ bool Plane::getLightIntersection(Ray ray, double* fill){
    if(texture->opacity>1-1E-6) return true;   
 
    Vector delta = ray.point - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
 
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx/textureX-.5), fix(dy/textureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
@@ -106,9 +107,10 @@ void Plane::move(){
 }
 void Plane::getColor(unsigned char* toFill,double* am, double* op, double* ref, Autonoma* r, Ray ray, unsigned int depth){
    Vector delta = ray.point - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
 
-   texture->getColor(toFill, am, op, ref, fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
+   texture->getColor(toFill, am, op, ref, fix(dx/textureX-.5), fix(dy/textureY-.5));
 }
 unsigned char Plane::reversible(){ 
    return 1; }
@@ -118,11 +120,12 @@ Vector Plane::getNormal(Vector point){
       return vect;
    else{
       Vector delta = point - center;
-      Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+      const double dx = delta.dot(right);
+      const double dy = delta.dot(up);
       
       double am, ref, op;
       unsigned char norm[3];
-      normalMap->getColor(norm, &am, &op, &ref, fix(dist.x/mapX-.5+mapOffX), fix(dist.y/mapY-.5+mapOffY));
+      normalMap->getColor(norm, &am, &op, &ref, fix(dx/mapX-.5+mapOffX), fix(dy/mapY-.5+mapOffY));
       Vector ret = ((norm[0]-128)*right+(norm[1]-128)*up+norm[2]*vect).normalize();
       return ret;
    }

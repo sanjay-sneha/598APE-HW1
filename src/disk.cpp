@@ -8,9 +8,10 @@ double Disk::getIntersection(Ray ray){
       return time;
 
    Vector delta = ray.point + ray.vector * time - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
 
-   return (  dist.x*dist.x/(textureX*textureX)+dist.y*dist.y/(textureY*textureY)>1  )?inf:time;
+   return (  dx*dx/(textureX*textureX)+dy*dy/(textureY*textureY)>1  )?inf:time;
 }
 
 bool Disk::getLightIntersection(Ray ray, double* fill){
@@ -20,13 +21,14 @@ bool Disk::getLightIntersection(Ray ray, double* fill){
    if(r<=0. || r>=1.) return false;
 
    Vector delta = ray.point + ray.vector * r - center;
-   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   const double dx = delta.dot(right);
+   const double dy = delta.dot(up);
    
-   if(  dist.x*dist.x/(textureX*textureX)+dist.y*dist.y/(textureY*textureY)>1  )return false;
+   if(  dx*dx/(textureX*textureX)+dy*dy/(textureY*textureY)>1  )return false;
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dx/textureX-.5), fix(dy/textureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;
