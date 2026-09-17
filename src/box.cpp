@@ -28,7 +28,7 @@ bool Box::getLightIntersection(const Ray& ray, double* fill){
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
    double amb, op, ref;
-   texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
+   texture->getColor(temp, &amb, &op, &ref,fix(dist.x*invTextureX-.5), fix(dist.y*invTextureY-.5));
    if(op>1-1E-6) return true;
    fill[0]*=temp[0]/255.;
    fill[1]*=temp[1]/255.;

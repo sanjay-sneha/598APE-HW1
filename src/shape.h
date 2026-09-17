@@ -8,7 +8,7 @@ class Shape{
    double yaw, pitch, roll, xsin, xcos, ysin, ycos, zsin, zcos;
    Vector center;
    Texture* texture;
-   double textureX, textureY, mapX, mapY, mapOffX, mapOffY;
+   double textureX, textureY, mapX, mapY, mapOffX, mapOffY, invTextureX, invTextureY;
    Texture* normalMap;
    virtual double getIntersection(const Ray& ray) = 0;
    virtual bool getLightIntersection(const Ray& ray, double* fill) = 0;
