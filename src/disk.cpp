@@ -7,9 +7,11 @@ double Disk::getIntersection(Ray ray){
    if(time==inf) 
       return time;
 
-   Vector delta = ray.point + ray.vector * time - center;
-   const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
+   const double px = ray.point.x + ray.vector.x * time - center.x;
+   const double py = ray.point.y + ray.vector.y * time - center.y;
+   const double pz = ray.point.z + ray.vector.z * time - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
    return (  dx*dx/(textureX*textureX)+dy*dy/(textureY*textureY)>1  )?inf:time;
 }
@@ -20,9 +22,11 @@ bool Disk::getLightIntersection(Ray ray, double* fill){
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
 
-   Vector delta = ray.point + ray.vector * r - center;
-   const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
+   const double px = ray.point.x + ray.vector.x * r - center.x;
+   const double py = ray.point.y + ray.vector.y * r - center.y;
+   const double pz = ray.point.z + ray.vector.z * r - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
    
    if(  dx*dx/(textureX*textureX)+dy*dy/(textureY*textureY)>1  )return false;
    if(texture->opacity>1-1E-6) return true;   

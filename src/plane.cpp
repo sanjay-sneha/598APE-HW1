@@ -88,9 +88,11 @@ bool Plane::getLightIntersection(Ray ray, double* fill){
 
    if(texture->opacity>1-1E-6) return true;   
 
-   Vector delta = ray.point - center;
-   const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
+   const double px = ray.point.x - center.x;
+   const double py = ray.point.y - center.y;
+   const double pz = ray.point.z - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
    unsigned char temp[4];
    double amb, op, ref;
@@ -106,9 +108,11 @@ void Plane::move(){
    d = -vect.dot(center);
 }
 void Plane::getColor(unsigned char* toFill,double* am, double* op, double* ref, Autonoma* r, Ray ray, unsigned int depth){
-   Vector delta = ray.point - center;
-   const double dx = delta.dot(right);
-   const double dy = delta.dot(up);
+   const double px = ray.point.x - center.x;
+   const double py = ray.point.y - center.y;
+   const double pz = ray.point.z - center.z;
+   const double dx = px * right.x + py * right.y + pz * right.z;
+   const double dy = px * up.x + py * up.y + pz * up.z;
 
    texture->getColor(toFill, am, op, ref, fix(dx/textureX-.5), fix(dy/textureY-.5));
 }
@@ -119,9 +123,11 @@ Vector Plane::getNormal(Vector point){
    if(normalMap==NULL)
       return vect;
    else{
-      Vector delta = point - center;
-      const double dx = delta.dot(right);
-      const double dy = delta.dot(up);
+      const double px = point.x - center.x;
+      const double py = point.y - center.y;
+      const double pz = point.z - center.z;
+      const double dx = px * right.x + py * right.y + pz * right.z;
+      const double dy = px * up.x + py * up.y + pz * up.z;
       
       double am, ref, op;
       unsigned char norm[3];
