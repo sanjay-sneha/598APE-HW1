@@ -76,15 +76,15 @@ void Plane::setRoll(double c){
 }
 
 double Plane::getIntersection(const Ray& ray){
-   const double t = ray.vector.dot(vect);
-   const double norm = vect.dot(ray.point)+d;
+   const double t =ray.vector.x*vect.x+ray.vector.y*vect.y+ray.vector.z*vect.z;
+   const double norm = vect.x*ray.point.x+vect.y*ray.point.y+vect.z*ray.point.z+d;
    const double r = -norm/t;
    return (r>0)?r:inf;
 }
 
 bool Plane::getLightIntersection(const Ray& ray, double* fill){
-   const double t = ray.vector.dot(vect);
-   const double norm = vect.dot(ray.point)+d;
+   const double t =ray.vector.x*vect.x+ray.vector.y*vect.y+ray.vector.z*vect.z;
+   const double norm = vect.x*ray.point.x+vect.y*ray.point.y+vect.z*ray.point.z+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
 

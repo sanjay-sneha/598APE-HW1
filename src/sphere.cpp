@@ -71,17 +71,17 @@ ax = 1
 B: <0, z, -y>
 A <-1,x/y,0>
 */
-if(normalMap==NULL)
+   if(normalMap==NULL)
       return vect;
-     double data3 = (center.y-point.y+radius)/(2*radius);
-     double data2 = atan2( point.z-center.z, point.x-center.x);
-     vect = vect.normalize();
-     Vector right = Vector(vect.x, vect.z, -vect.y);
-     Vector up = Vector(vect.z, vect.y, -vect.x);
-      double am, ref, op;
-      unsigned char norm[3];
-      normalMap->getColor(norm, &am, &op, &ref, fix(((mapOffX+mapOffX)+data2)/M_TWO_PI/mapX),fix(((mapOffY+mapOffY)/M_TWO_PI-data3)/mapY));
-      return ((norm[0]-128)*right+(norm[1]-128)*up+norm[2]*vect).normalize();
+   double data3 = (center.y-point.y+radius)/(2*radius);
+   double data2 = atan2( point.z-center.z, point.x-center.x);
+   vect = vect.normalize();
+   Vector right = Vector(vect.x, vect.z, -vect.y);
+   Vector up = Vector(vect.z, vect.y, -vect.x);
+   double am, ref, op;
+   unsigned char norm[3];
+   normalMap->getColor(norm, &am, &op, &ref, fix(((mapOffX+mapOffX)+data2)/M_TWO_PI/mapX),fix(((mapOffY+mapOffY)/M_TWO_PI-data3)/mapY));
+   return ((norm[0]-128)*right+(norm[1]-128)*up+norm[2]*vect).normalize();
 }
 
 void Sphere::setAngles(double a, double b, double c){
