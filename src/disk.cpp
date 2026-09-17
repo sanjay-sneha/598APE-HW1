@@ -6,7 +6,10 @@ double Disk::getIntersection(Ray ray){
    double time = Plane::getIntersection(ray);
    if(time==inf) 
       return time;
-   Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*time-center);
+
+   Vector delta = ray.point + ray.vector * time - center;
+   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+
    return (  dist.x*dist.x/(textureX*textureX)+dist.y*dist.y/(textureY*textureY)>1  )?inf:time;
 }
 
@@ -15,7 +18,10 @@ bool Disk::getLightIntersection(Ray ray, double* fill){
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
-   Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*r-center);
+
+   Vector delta = ray.point + ray.vector * r - center;
+   Vector dist(delta.dot(right), delta.dot(up), delta.dot(vect));
+   
    if(  dist.x*dist.x/(textureX*textureX)+dist.y*dist.y/(textureY*textureY)>1  )return false;
    if(texture->opacity>1-1E-6) return true;   
    unsigned char temp[4];
