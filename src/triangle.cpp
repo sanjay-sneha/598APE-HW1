@@ -3,9 +3,8 @@
 Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.){
    center = c;
    Vector righta = (b-c);
-   invTextureX = 1.0 / textureX;
-   invTextureY = 1.0 / textureY;
    textureX = righta.mag();
+   invTextureX = 1.0 / textureX;
    right = righta*invTextureX;
    vect = right.cross(b-a).normalize();
 
@@ -38,6 +37,7 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
 	double npX = delta.dot(right);
 	double npY = delta.dot(up);
 	textureY = npY;
+   invTextureY = 1.0 / textureY;
 	thirdX = npX;
    
    d = -vect.dot(center);
