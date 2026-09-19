@@ -45,7 +45,7 @@ This is the number we report throughout our paper; no external timing tool is ne
 
 ### Elephant Mesh (video)
 ```bash
-./main.exe -i inputs/realelephant.ray --ppm -a inputs/elephant.animate --movie -F 24 -W 500 -H 500 -o output/elephant.mp4
+./main.exe -i inputs/elephant.ray --ppm -a inputs/elephant.animate --movie -F 24 -W 500 -H 500 -o output/elephant.mp4
 ```
 
 ### Verifying baseline vs. optimized
