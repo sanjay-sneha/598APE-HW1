@@ -89,6 +89,6 @@ We added the following optimizations:
 - **3:** `calcColor` restructuring removing malloc and insertion sort
 - **4:** Precompute inverse texture coordinates
 - **5:** Reduce dot products to needed directions
-- **6:** Manual dot-product inlining
+- **6:** Manual dot-product computation
 
 To evaluate any of these in isolation, check out the listed commit directly, rebuild, and compare timing against the immediately preceding commit on that branch.
