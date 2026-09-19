@@ -83,12 +83,12 @@ For each optimization, check out the listed commit (on the listed branch), rebui
 
 We added the following optimizations:
 
-- [ ] **0:** Baseline
-- [ ] **1:** solveScalers: eliminate redundant dimension solves
-- [ ] **2:** Pass `Ray` by const reference
-- [ ] **3:** `calcColor` restructuring removing malloc and insertion sort
-- [ ] **4:** Precompute inverse texture coordinates
-- [ ] **5:** Reduce dot products to needed directions
-- [ ] **6:** Manual dot-product inlining
+**0:** Baseline
+**1:** solveScalers: eliminate redundant dimension solves
+**2:** Pass `Ray` by const reference
+**3:** `calcColor` restructuring removing malloc and insertion sort
+**4:** Precompute inverse texture coordinates
+**5:** Reduce dot products to needed directions
+**6:** Manual dot-product inlining
 
 To evaluate any of these in isolation, check out the listed commit directly, rebuild, and compare timing against the immediately preceding commit on that branch.
