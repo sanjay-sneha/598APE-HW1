@@ -52,7 +52,9 @@ This is the number we report throughout our paper; no external timing tool is ne
 To reproduce our baseline numbers, check out the commit immediately before any optimization commits (see table below) and rebuild with `make clean && make -j` before timing. To verify a specific optimization's effect in isolation, check out the commit *after* that optimization's change and rebuild the same way. This way you can compare the two printed times to reproduce the delta we reported in the corresponding section.
 
 ### Profiling with perf
-To reproduce the profiler output referenced in our report:
+
+To reproduce the profiler output referenced in our report, run these command from the `naomi-perf` branch:
+
 ```
 make clean 
 
@@ -78,5 +80,17 @@ Swap the input file/flags for the elephant mesh scene as needed to reproduce the
 ## 3. Optimizations and How to Evaluate Each
 
 For each optimization, check out the listed commit (on the listed branch), rebuild (`make clean && make -j`), and re-run the relevant scene command above. Comparing the printed render time to the previous row reproduces the speedup reported in that section of our paper.
+
+We added the following optimizations:
+
+| # | Optimization
+|---|---|---|---|---|
+| 0 | Baseline
+| 1 | solveScalers: eliminate redundant dimension solves
+| 2 | Pass `Ray` by const reference
+| 3 | `calcColor` restructuring removing malloc and insertion sort
+| 4 | Precompute inverse texture coordinates
+| 5 | Reduce dot products to needed directions
+| 6 | Manual dot-product inlining
 
 To evaluate any of these in isolation, check out the listed commit directly, rebuild, and compare timing against the immediately preceding commit on that branch.
